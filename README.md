@@ -69,7 +69,7 @@ Create a Lambda Function to Add Partitions to Athena
 Create a Lambda function that can be associated with S3 new object event notifications. When creating the function, you'll need to set several environment variables:
 
  - `PARTITION_TYPE` Supply one of the following values: `Month`, `Day` or `Hour`. This environment variable is optional: if you omit it, the function will default to `Day`.
- - `TABLE_NAME` Use the format ``<database>.<table_name>`. For example, `sampledb.vpc_flow_logs`.
+ - `TABLE_NAME` Use the format `<database>.<table_name>`. For example, `sampledb.vpc_flow_logs`.
  - `S3_STAGING_DIR` An Amazon S3 location to which your query output will be written. (Although the Lambda function is only executing DDL statements, Athena still writes an output file to S3.)
  - `ATHENA_REGION` The region in which Athena is located (e.g. `us-east-1`).
  - `DDB_TABLE_NAME` The name of the DynamoDB table holding partition information.
