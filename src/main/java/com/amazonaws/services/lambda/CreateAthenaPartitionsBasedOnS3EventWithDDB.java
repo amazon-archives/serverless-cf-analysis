@@ -1,6 +1,8 @@
 package com.amazonaws.services.lambda;
 
 import com.amazonaws.athena.jdbc.shaded.com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.model.*;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
@@ -15,6 +17,7 @@ import com.amazonaws.services.lambda.model.PartitionConfig;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
+import com.amazonaws.services.lambda.utils.EnvironmentVariableUtils;
 import com.amazonaws.services.s3.event.S3EventNotification;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 
@@ -40,7 +43,10 @@ public class CreateAthenaPartitionsBasedOnS3EventWithDDB implements RequestHandl
 
         Collection<Partition>requiredPartitions = new HashSet<>();
         TableService tableService = new TableService();
-        DynamoDB dynamoDBClient=new DynamoDB(new AmazonDynamoDBClient(new EnvironmentVariableCredentialsProvider()));
+        AmazonDynamoDBClient ddbClient=new AmazonDynamoDBClient(new EnvironmentVariableCredentialsProvider());
+        String region = EnvironmentVariableUtils.getOptionalEnv("ATHENA_REGION", EnvironmentVariableUtils.getMandatoryEnv(("AWS_DEFAULT_REGION")));
+        ddbClient.setRegion(Region.getRegion(Regions.fromName(region)));
+        DynamoDB dynamoDBClient=new DynamoDB(ddbClient);
 
         for(S3EventNotification.S3EventNotificationRecord record:s3Event.getRecords()){
 
